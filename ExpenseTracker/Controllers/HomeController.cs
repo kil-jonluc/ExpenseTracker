@@ -22,9 +22,9 @@ namespace ExpenseTracker.Controllers
         //{
         //    return View();
         //}
-        public IActionResult Index(string message)
+        public IActionResult Index()
         {
-            ViewBag.Message = message;
+            
             return View();
         }
 
@@ -58,13 +58,13 @@ namespace ExpenseTracker.Controllers
                 ModelState.AddModelError("SSN", "SSN must be significant");
                 isError = true;
             }
-            if (!isError)
+            if (isError)
             {
                 return View("CreateUser", user);
             }
             else
             {
-                return View("Index", "Thank you! Acount Created!");
+                return View("Index");
             }
         }
     }
