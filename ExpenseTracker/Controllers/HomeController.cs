@@ -64,7 +64,8 @@ namespace ExpenseTracker.Controllers
             }
             else
             {
-                return View("Index");
+                ViewBag.Message = "thanks";
+                return new RedirectResult("Index");
             }
         }
     }
