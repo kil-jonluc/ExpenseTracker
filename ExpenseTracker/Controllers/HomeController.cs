@@ -9,6 +9,7 @@ using ExpenseTracker.Models;
 
 namespace ExpenseTracker.Controllers
 {
+    //Controls the functionality of the home page views 
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -17,14 +18,9 @@ namespace ExpenseTracker.Controllers
         {
             _logger = logger;
         }
-      
-        //public IActionResult Index()
-        //{
-        //    return View();
-        //}
+
         public IActionResult Index()
         {
-            
             return View();
         }
 
@@ -39,33 +35,42 @@ namespace ExpenseTracker.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public IActionResult CreateUser()
+        // GET: Home/LoinIn
+        public IActionResult Login()
         {
             
-            return View("CreateUser", new User());
+            return View("Login", new User());
         }
+
+        // POST: Home/Login
         [HttpPost]
-        public IActionResult CreateUser(User user)
+        public IActionResult Login(User user)
         {
             bool isError = false;
-            if (user.FirstName != "Jon")
+            if (user.userName == null)
             {
-                ModelState.AddModelError("FirstName", "First Name Must Be Jon");
+                ModelState.AddModelError("userName", "User Name Must significant");
                 isError = true;
             }
-            if (user.SSN == null)
+            if (user.password == null)
             {
-                ModelState.AddModelError("SSN", "SSN must be significant");
+                ModelState.AddModelError("password", "Password must be significant");
                 isError = true;
             }
             if (isError)
             {
-                return View("CreateUser", user);
+                return View("Login", user);
             }
             else
             {
-                ViewBag.Message = "thanks";
-                return new RedirectResult("Index");
+                try
+                {
+                    return RedirectToAction("Index", "Dashboard");
+                }
+                catch
+                {
+                    return View();
+                }
             }
         }
     }
