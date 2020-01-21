@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using ExpenseTracker.Models;
@@ -27,7 +29,7 @@ namespace ExpenseTracker.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreateUser(User user)
         {
-            try
+           // try
             {
                 bool isError = false;
                 if (user.FirstName != "Jon")
@@ -47,15 +49,55 @@ namespace ExpenseTracker.Controllers
                 else
                 {
                     ViewBag.message = "thanks";
+                    StoreUserInDbTable(user);
                     return View("CreateSuccess");
                     //return RedirectToAction("Index", "Home");
                 }
             }
-            catch
+            //catch
+           // {
+            //    return View();
+           // }
+        }
+
+        protected void StoreUserInDbTable(User user)
+        {
+            SqlDataReader reader = null;
+            SqlConnection connection;
+            string connectionString = null;
+            connectionString = @"Data Source = (localdb)\ProjectsV13; Initial Catalog = ExpenseTrackerDataBase; Integrated Security = True; Connect Timeout = 30; Encrypt = False; TrustServerCertificate = False; ApplicationIntent = ReadWrite; MultiSubnetFailover = False";
+            connection = new SqlConnection(connectionString);
+            try
             {
-                return View();
+                connection.Open();
+                SqlCommand cmd = new SqlCommand("spNewUser_Insert", connection);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
+                cmd.Parameters.AddWithValue("@LastName", user.LastName);
+                cmd.Parameters.AddWithValue("@Email", user.email);
+                cmd.Parameters.AddWithValue("@UserName", user.userName);
+                cmd.Parameters.AddWithValue("@Password", user.password);
+                cmd.Parameters.AddWithValue("@PhoneNumber", user.phoneNumber);
+                cmd.Parameters.AddWithValue("@SSN", user.SSN);
+
+                reader = cmd.ExecuteReader();
+            }
+            finally
+            {
+
+                //Close the connections 
+                if (connection != null)
+                {
+                    connection.Close();
+                }
+                if (reader != null)
+                {
+                    reader.Close();
+                }
             }
         }
+
+
 
         // GET: User/Edit/5
         public ActionResult Edit(int id)
