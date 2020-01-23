@@ -32,24 +32,29 @@ namespace ExpenseTracker.Controllers
            // try
             {
                 bool isError = false;
-                if (user.FirstName != "Jon")
+                if (user.userName == null)
                 {
-                    ModelState.AddModelError("FirstName", "First Name Must Be Jon");
+                    ModelState.AddModelError("UserName", "Username Must Be Valid");
                     isError = true;
                 }
-                if (user.SSN == null)
+                //ADD need to have a check to see if the username is unique or not
+                if (user.password == null)
                 {
-                    ModelState.AddModelError("SSN", "SSN must be significant");
+                    ModelState.AddModelError("password", "Password must be significant");
                     isError = true;
                 }
+
+                //if there is an error create user view is returned
                 if (isError)
                 {
                     return View("CreateUser", user);
                 }
                 else
                 {
-                    ViewBag.message = "thanks";
+                    //calls a stored procedure that stores the new user data in a table 
                     StoreUserInDbTable(user);
+
+                    //returns a view that tells user that new user was created
                     return View("CreateSuccess");
                     //return RedirectToAction("Index", "Home");
                 }
