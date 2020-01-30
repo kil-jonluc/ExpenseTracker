@@ -12,6 +12,10 @@ namespace ExpenseTracker.Controllers
 {
     public class UserController : Controller
     {
+        SqlDataReader reader = null;
+        SqlConnection connection;
+        string connectionString = null;
+
         // GET: User
         public IActionResult Index()
         {
@@ -38,6 +42,14 @@ namespace ExpenseTracker.Controllers
                     isError = true;
                 }
                 //ADD need to have a check to see if the username is unique or not
+                if (user.userName != null)
+                {
+                }
+                else
+                {
+                    ModelState.AddModelError("username", "Username must be significant");
+                    isError = true;
+                }
                 if (user.password == null)
                 {
                     ModelState.AddModelError("password", "Password must be significant");
@@ -67,11 +79,9 @@ namespace ExpenseTracker.Controllers
 
         protected void StoreUserInDbTable(User user)
         {
-            SqlDataReader reader = null;
-            SqlConnection connection;
-            string connectionString = null;
             connectionString = @"Data Source = (localdb)\ProjectsV13; Initial Catalog = ExpenseTrackerDataBase; Integrated Security = True; Connect Timeout = 30; Encrypt = False; TrustServerCertificate = False; ApplicationIntent = ReadWrite; MultiSubnetFailover = False";
             connection = new SqlConnection(connectionString);
+
             try
             {
                 connection.Open();
@@ -102,7 +112,35 @@ namespace ExpenseTracker.Controllers
             }
         }
 
+        protected int CheckIfUsernameAvalible(User user)
+        {//not working yet
+            connectionString = @"Data Source = (localdb)\ProjectsV13; Initial Catalog = ExpenseTrackerDataBase; Integrated Security = True; Connect Timeout = 30; Encrypt = False; TrustServerCertificate = False; ApplicationIntent = ReadWrite; MultiSubnetFailover = False";
+            connection = new SqlConnection(connectionString);
 
+            try
+            {
+                connection.Open();
+                SqlCommand cmd = new SqlCommand("spCheckingUsername", connection);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@UserName", user.userName);
+                reader = cmd.ExecuteReader();
+            }
+            finally
+            {
+
+                //Close the connections 
+                if (connection != null)
+                {
+                    connection.Close();
+                }
+                if (reader != null)
+                {
+                    reader.Close();
+                }
+            }
+            //placeholder for now
+            return 1;
+        }
 
         // GET: User/Edit/5
         public ActionResult Edit(int id)
