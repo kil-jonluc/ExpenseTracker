@@ -15,4 +15,10 @@ namespace ExpenseTracker.Controllers
             return View("Dashboard");
         }
     }
+
+    //need a method that displays company profile 
+
+    //need a method that displays user information
+
+    //need a method that calls edit user
 }

@@ -187,5 +187,10 @@ namespace ExpenseTracker.Controllers
                 return View();
             }
         }
+
+        //need a method that allows user to edit user information this would override user in the database
+
+
+        //need a method that allows the user to remove all expense records and user profile
     }
 }
