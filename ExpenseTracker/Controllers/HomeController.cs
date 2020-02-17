@@ -39,9 +39,10 @@ namespace ExpenseTracker.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        //**************LOGIN AND PULLS USER CLASS FROM DATABASE************** 
         // GET: Home/LoinIn
         public IActionResult Login()
-        {
+        {        
             //login in view returns the view of log in with a new user class as a parameter
             return View("Login", new User());
         }
@@ -76,14 +77,30 @@ namespace ExpenseTracker.Controllers
             {
                 try
                 {
-                    //if there is not error then the user is redirected to the dashboard
-                    return RedirectToAction("Index", "Dashboard");
+                    //creates an instance of the user controller and then calls the method that retrieves the correct user from the data base
+                    UserController _usercontroller = new UserController();
+                    User RetrievedUser = _usercontroller.GetUserFromDataBase(user);
+
+                    if (RetrievedUser.IDNumber != 0)
+                    {
+                        
+                        //if there is not error then the user is redirected to the dashboard
+                        return RedirectToAction("Dashboard", "Dashboard", RetrievedUser);
+                    }
+                    else
+                    {
+                        ViewBag.Message = "user not found";
+                        //otherwise this goes back to the login page
+                        return Login();
+                    }
+                    
                 }
                 catch
                 {
                     //otherwise this goes back to the login page
-                    return View();
+                    return Login();
                 }
+
             }
         }
     }

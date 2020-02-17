@@ -26,7 +26,9 @@ namespace ExpenseTracker.Models
         [DisplayName("Phone Number")]
         public string phoneNumber { get; set; }
         
-        [DisplayName("Social Security Number")]
+        [DisplayName("SSN")]
         public string SSN { get; set; }
+
+        public int IDNumber { get; set; }
     }
 }

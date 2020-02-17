@@ -12,9 +12,14 @@ namespace ExpenseTracker.Controllers
 {
     public class UserController : Controller
     {
-        SqlDataReader reader = null;
-        SqlConnection connection;
-        string connectionString = null;
+        //reads data back from the database
+        //SqlDataReader reader = null;
+
+        //opens and closes connection to the database
+        //SqlConnection connection;
+
+        //connection string to the database
+        const string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=ExpenseTrackerDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 
         // GET: User
         public IActionResult Index()
@@ -22,142 +27,227 @@ namespace ExpenseTracker.Controllers
             return View();
         }
 
+
+        //**************CREATES NEW USER************** 
         // GET: User/Create
         public IActionResult CreateUser()
         {
             return View("CreateUser", new User());
         }
 
+        //collects new user information 
         // POST: User/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult CreateUser(User user)
         {
-           // try
+            //checks for errors in user data
+            bool isError = false;
+
+            //At this point and For testing purposes I am only validating the username and password 
+            //Ensures the username is not null
+            if (user.userName == null)
             {
-                bool isError = false;
-                if (user.userName == null)
+                ModelState.AddModelError("UserName", "Username Must Be Valid");
+                isError = true;
+            }
+            //ADD need to have a check to see if the username is unique or not
+            if (user.userName != null)
+            {
+                bool not_unique = CheckIfUsernameAvalible(user);
+                if (not_unique)
                 {
-                    ModelState.AddModelError("UserName", "Username Must Be Valid");
+                    ModelState.AddModelError("UserName", "Choose A Unique Username");
                     isError = true;
-                }
-                //ADD need to have a check to see if the username is unique or not
-                if (user.userName != null)
-                {
-                }
-                else
-                {
-                    ModelState.AddModelError("username", "Username must be significant");
-                    isError = true;
-                }
-                if (user.password == null)
-                {
-                    ModelState.AddModelError("password", "Password must be significant");
-                    isError = true;
-                }
-
-                //if there is an error create user view is returned
-                if (isError)
-                {
-                    return View("CreateUser", user);
-                }
-                else
-                {
-                    //calls a stored procedure that stores the new user data in a table 
-                    StoreUserInDbTable(user);
-
-                    //returns a view that tells user that new user was created
-                    return View("CreateSuccess");
-                    //return RedirectToAction("Index", "Home");
                 }
             }
-            //catch
-           // {
-            //    return View();
-           // }
+
+            //Ensures the password is null
+            if (user.password == null)
+            {
+                ModelState.AddModelError("password", "Password must be significant");
+                isError = true;
+            }
+
+            //if there is an error create user view is returned
+            if (isError)
+            {
+                return View("CreateUser", user);
+            }
+            else
+            {
+                //calls a stored procedure that stores the new user data in a table 
+                StoreUserInDbTable(user);
+
+                return View("CreateSuccess");
+            }
         }
 
+        //**************STORES NEW USER IN DATA BASE************** 
         protected void StoreUserInDbTable(User user)
         {
-            connectionString = @"Data Source = (localdb)\ProjectsV13; Initial Catalog = ExpenseTrackerDataBase; Integrated Security = True; Connect Timeout = 30; Encrypt = False; TrustServerCertificate = False; ApplicationIntent = ReadWrite; MultiSubnetFailover = False";
-            connection = new SqlConnection(connectionString);
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlDataReader reader = null;
 
+                try
+                {
+                    connection.Open();
+                    SqlCommand cmd = new SqlCommand("spNewUser_Insert", connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
+                    cmd.Parameters.AddWithValue("@LastName", user.LastName);
+                    cmd.Parameters.AddWithValue("@Email", user.email);
+                    cmd.Parameters.AddWithValue("@UserName", user.userName);
+                    cmd.Parameters.AddWithValue("@Password", user.password);
+                    cmd.Parameters.AddWithValue("@PhoneNumber", user.phoneNumber);
+                    cmd.Parameters.AddWithValue("@SSN", user.SSN);
+
+                    //if rows change is value then you know that it this worked correctly
+                    int rowsChanged = cmd.ExecuteNonQuery();
+                }
+                finally
+                {
+
+                    //Close the connections 
+                    if (connection != null)
+                    {
+                        connection.Close();
+                    }
+                    if (reader != null)
+                    {
+                        reader.Close();
+                    }
+                }
+            }
+        }
+
+        //**************KEEPS USER DATA FROM BEING DUPLICATED IN DATA BASE************** 
+        protected Boolean CheckIfUsernameAvalible(User user)
+        {
             try
             {
+                //checks to see if the database exists and is connecting, does not really have any function other than debugging 
+                string query = "select * from sysobjects where type='P' and name='spCheckingUsername'";
+                bool spExists = false;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                spExists = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+
+                    connection.Open();
+                    SqlCommand cmd = new SqlCommand("spCheckingUsername", connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@UserName", user.userName);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    int userNamesCount = 0;
+                    if (reader.HasRows)
+                    {
+                        try
+                        {
+                            //there will be an error if there is no user name because it will try to define nothing to the intiger
+                            while (reader.Read())
+                            {
+                                userNamesCount = reader.GetInt32(0);
+                            }
+                            return (userNamesCount == 0 ? false : true);
+                        }
+                        catch
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        //this would mean thought that the table does not exist and that one might need to be set up?
+                        return false;
+                    }
+
+                    //below is some code to help me pull user data from the table using methods similar to the one above
+                    //int userNamesCount = 0;
+                    //User newUser = null;
+                    //if (reader.HasRows)
+                    //{
+                    //    newUser = new User();
+                    //    newUser.FirstName = reader.GetString(0);
+                    //    newUser.LastName = reader.GetString(1);
+                    //    userNamesCount = reader.GetInt32(0);
+                    //    //string userName = reader.GetString(1);
+                    //}
+                }
+            }
+            finally
+            {
+            }
+        }
+
+        public User GetUserFromDataBase(User user)
+        {
+            User ReturnUser = new User();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
                 connection.Open();
-                SqlCommand cmd = new SqlCommand("spNewUser_Insert", connection);
+                SqlCommand cmd = new SqlCommand("spRetrieve_User", connection);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
-                cmd.Parameters.AddWithValue("@LastName", user.LastName);
-                cmd.Parameters.AddWithValue("@Email", user.email);
                 cmd.Parameters.AddWithValue("@UserName", user.userName);
                 cmd.Parameters.AddWithValue("@Password", user.password);
-                cmd.Parameters.AddWithValue("@PhoneNumber", user.phoneNumber);
-                cmd.Parameters.AddWithValue("@SSN", user.SSN);
 
-                reader = cmd.ExecuteReader();
-            }
-            finally
-            {
-
-                //Close the connections 
-                if (connection != null)
+                SqlDataReader reader = cmd.ExecuteReader();
+                
+                while (reader.Read())
                 {
-                    connection.Close();
+                    ReturnUser.IDNumber = reader.GetInt32(0);
+                    ReturnUser.FirstName = reader.GetString(1);
+                    ReturnUser.LastName = reader.GetString(2);
+                    ReturnUser.email = reader.GetString(3);
+                    ReturnUser.userName = reader.GetString(4);
+                    ReturnUser.password = reader.GetString(5);
+                    ReturnUser.phoneNumber = reader.GetString(6);
+                    ReturnUser.SSN = reader.GetString(7);
                 }
-                if (reader != null)
-                {
-                    reader.Close();
-                }
+                return ReturnUser;
             }
         }
 
-        protected int CheckIfUsernameAvalible(User user)
-        {//not working yet
-            connectionString = @"Data Source = (localdb)\ProjectsV13; Initial Catalog = ExpenseTrackerDataBase; Integrated Security = True; Connect Timeout = 30; Encrypt = False; TrustServerCertificate = False; ApplicationIntent = ReadWrite; MultiSubnetFailover = False";
-            connection = new SqlConnection(connectionString);
-
-            try
-            {
-                connection.Open();
-                SqlCommand cmd = new SqlCommand("spCheckingUsername", connection);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@UserName", user.userName);
-                reader = cmd.ExecuteReader();
-            }
-            finally
-            {
-
-                //Close the connections 
-                if (connection != null)
-                {
-                    connection.Close();
-                }
-                if (reader != null)
-                {
-                    reader.Close();
-                }
-            }
-            //placeholder for now
-            return 1;
-        }
-
+        //**************EDITS USER IN DATA BASE************** 
         // GET: User/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult EditUser()
         {
-            return View();
+            if (TempData["User"] != null)
+            {
+                var user = (User)TempData["User"];
+                return View("EditUser", user);
+            }
+            else
+            {
+                return View(new User());
+            }
         }
 
         // POST: User/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult EditUser(User user)
         {
             try
             {
                 // TODO: Add update logic here
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Dashboard", "Dashboard");
             }
             catch
             {

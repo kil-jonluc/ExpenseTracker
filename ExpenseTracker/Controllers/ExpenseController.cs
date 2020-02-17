@@ -36,7 +36,7 @@ namespace ExpenseTracker.Controllers
             //need to add new expense to the data base 
 
             //return to the dashboard
-            return RedirectToAction("Index", "Dashboard");
+            return RedirectToAction("Dashboard", "Dashboard");
         }
 
         // need a method to edit and expense when an expenses is clicked on it pulls that item from the expense list 
