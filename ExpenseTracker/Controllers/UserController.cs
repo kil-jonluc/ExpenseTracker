@@ -6,12 +6,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using ExpenseTracker.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc; 
 
 namespace ExpenseTracker.Controllers
 {
     public class UserController : Controller
     {
+
         //reads data back from the database
         //SqlDataReader reader = null;
 
@@ -29,6 +30,7 @@ namespace ExpenseTracker.Controllers
 
 
         //**************CREATES NEW USER************** 
+        #region Create New User
         // GET: User/Create
         public IActionResult CreateUser()
         {
@@ -194,7 +196,10 @@ namespace ExpenseTracker.Controllers
             {
             }
         }
+        #endregion
 
+        //**************USER LOGIN METHODS************** 
+        #region User Login Methods
         public User GetUserFromDataBase(User user)
         {
             User ReturnUser = new User();
@@ -219,41 +224,38 @@ namespace ExpenseTracker.Controllers
                     ReturnUser.phoneNumber = reader.GetString(6);
                     ReturnUser.SSN = reader.GetString(7);
                 }
+           
                 return ReturnUser;
             }
         }
+        #endregion
 
-        //**************EDITS USER IN DATA BASE************** 
-        // GET: User/Edit/5
+        //**************EDITS USER ************** 
+        #region Edit User
+        // GET: Dashboard/Edit
         public ActionResult EditUser()
         {
-            if (TempData["User"] != null)
-            {
-                var user = (User)TempData["User"];
-                return View("EditUser", user);
-            }
-            else
-            {
-                return View(new User());
-            }
+            return View();
         }
 
-        // POST: User/Edit/5
+        // POST: Dashboard/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult EditUser(User user)
         {
+            
             try
             {
                 // TODO: Add update logic here
 
-                return RedirectToAction("Dashboard", "Dashboard");
+                return RedirectToAction("Dashboard", "User");
             }
             catch
             {
                 return View();
             }
         }
+        
 
         // GET: User/Delete/5
         public ActionResult Delete(int id)
@@ -270,17 +272,31 @@ namespace ExpenseTracker.Controllers
             {
                 // TODO: Add delete logic here
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Home");
             }
             catch
             {
                 return View();
             }
         }
+        #endregion
 
         //need a method that allows user to edit user information this would override user in the database
 
 
-        //need a method that allows the user to remove all expense records and user profile
+        //need a method that allows the user to remove all expense records and user profile //need a method that displays company profile 
+
+        //need a method that displays user information
+
+        //need a method that calls edit user
+
+        //************** USER DASHBOARD************** 
+        #region User Dashboard
+        public IActionResult Dashboard(User user)
+        {
+            ViewBag.User = user;
+            return View(user);
+        }
+        #endregion
     }
 }

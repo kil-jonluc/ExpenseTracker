@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Session;
 
 namespace ExpenseTracker
 {
@@ -24,6 +25,13 @@ namespace ExpenseTracker
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            //I am adding the below three methods for the session set up
+            services.AddMvc();
+            services.AddDistributedMemoryCache();
+            services.AddSession(options => {
+                options.IdleTimeout = TimeSpan.FromMinutes(10);//You can set Time   
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +51,9 @@ namespace ExpenseTracker
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            //I am adding this for session setup  
+            app.UseSession();
 
             app.UseAuthorization();
 

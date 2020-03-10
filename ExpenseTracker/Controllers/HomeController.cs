@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ExpenseTracker.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace ExpenseTracker.Controllers
 {
@@ -13,6 +14,7 @@ namespace ExpenseTracker.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        const string SessionUserName = "_Username";
 
         //dont know what this one does 
         public HomeController(ILogger<HomeController> logger)
@@ -23,6 +25,7 @@ namespace ExpenseTracker.Controllers
         //returns the index view 
         public IActionResult Index()
         {
+            HttpContext.Session.SetString("Test", "Session Value");
             return View();
         }
 
@@ -81,11 +84,12 @@ namespace ExpenseTracker.Controllers
                     UserController _usercontroller = new UserController();
                     User RetrievedUser = _usercontroller.GetUserFromDataBase(user);
 
+            
                     if (RetrievedUser.IDNumber != 0)
                     {
                         
                         //if there is not error then the user is redirected to the dashboard
-                        return RedirectToAction("Dashboard", "Dashboard", RetrievedUser);
+                        return RedirectToAction("Dashboard", "User", RetrievedUser);
                     }
                     else
                     {
