@@ -6,18 +6,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using ExpenseTracker.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc; 
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Session;
 
 namespace ExpenseTracker.Controllers
 {
     public class UserController : Controller
     {
-
-        //reads data back from the database
-        //SqlDataReader reader = null;
-
-        //opens and closes connection to the database
-        //SqlConnection connection;
+        User ActiveUser = new User();
 
         //connection string to the database
         const string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=ExpenseTrackerDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
@@ -130,23 +126,23 @@ namespace ExpenseTracker.Controllers
             try
             {
                 //checks to see if the database exists and is connecting, does not really have any function other than debugging 
-                string query = "select * from sysobjects where type='P' and name='spCheckingUsername'";
-                bool spExists = false;
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                spExists = true;
-                                break;
-                            }
-                        }
-                    }
-                }
+                //  string query = "select * from sysobjects where type='P' and name='spCheckingUsername'";
+                //  bool spExists = false;
+                //  using (SqlConnection connection = new SqlConnection(connectionString))
+                //  {
+                //      connection.Open();
+                //      using (SqlCommand command = new SqlCommand(query, connection))
+                //      {
+                //          using (SqlDataReader reader = command.ExecuteReader())
+                //          {
+                //              while (reader.Read())
+                //              {
+                //                  spExists = true;
+                //                  break;
+                //              }
+                //          }
+                //      }
+                //  }
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
 
@@ -224,9 +220,9 @@ namespace ExpenseTracker.Controllers
                     ReturnUser.phoneNumber = reader.GetString(6);
                     ReturnUser.SSN = reader.GetString(7);
                 }
-           
-                return ReturnUser;
             }
+            ActiveUser = ReturnUser;
+            return ReturnUser;
         }
         #endregion
 
@@ -235,7 +231,7 @@ namespace ExpenseTracker.Controllers
         // GET: Dashboard/Edit
         public ActionResult EditUser()
         {
-            return View();
+            return View(ActiveUser);
         }
 
         // POST: Dashboard/Edit

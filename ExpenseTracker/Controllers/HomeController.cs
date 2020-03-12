@@ -14,7 +14,6 @@ namespace ExpenseTracker.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        const string SessionUserName = "_Username";
 
         //dont know what this one does 
         public HomeController(ILogger<HomeController> logger)
@@ -25,7 +24,6 @@ namespace ExpenseTracker.Controllers
         //returns the index view 
         public IActionResult Index()
         {
-            HttpContext.Session.SetString("Test", "Session Value");
             return View();
         }
 
@@ -83,7 +81,6 @@ namespace ExpenseTracker.Controllers
                     //creates an instance of the user controller and then calls the method that retrieves the correct user from the data base
                     UserController _usercontroller = new UserController();
                     User RetrievedUser = _usercontroller.GetUserFromDataBase(user);
-
             
                     if (RetrievedUser.IDNumber != 0)
                     {

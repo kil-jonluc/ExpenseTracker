@@ -52,8 +52,9 @@ namespace ExpenseTracker
 
             app.UseRouting();
 
-            //I am adding this for session setup  
+            //I am adding these for session setup  
             app.UseSession();
+
 
             app.UseAuthorization();
 
