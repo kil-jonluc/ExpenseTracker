@@ -50,7 +50,15 @@
         </dd>
     </dl>
 </div>
-
-<a href="@Url.ActionLink("EditUser")" type="button" class="btn btn-primary btn-lg btn-block" >Edit User</a>
+<div>
+    @using(Html.BeginForm("EditUser", "User", FormMethod.Get))
+    {
+        @Html.HiddenFor(m => m.IDNumber)
+        <input type="submit" class="btn btn-primary btn-lg btn-block" />
+        @*<a href="@Url.ActionLink("EditUser")" type="button" class="btn btn-primary btn-lg btn-block" >Edit User</a>*@
+    }
+    
+    
+</div>
 
 ***we need a thing that prints the expenses list onto a table***

@@ -7,20 +7,22 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ExpenseTracker.Models;
 using Microsoft.AspNetCore.Http;
+using ExpenseTracker.Helpers;
 
 namespace ExpenseTracker.Controllers
 {
     //Controls the functionality of the home page views 
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IHttpContextAccessor _accessor;
 
-        //dont know what this one does 
-        public HomeController(ILogger<HomeController> logger)
+
+        public HomeController(IHttpContextAccessor httpContextAccessor)
         {
-            _logger = logger;
+            _accessor = httpContextAccessor;
         }
 
+        
         //returns the index view 
         public IActionResult Index()
         {
@@ -79,9 +81,9 @@ namespace ExpenseTracker.Controllers
                 try
                 {
                     //creates an instance of the user controller and then calls the method that retrieves the correct user from the data base
-                    UserController _usercontroller = new UserController();
-                    User RetrievedUser = _usercontroller.GetUserFromDataBase(user);
-            
+                    UserDB userDB = new UserDB();
+                    User RetrievedUser = userDB.GetUserFromDataBase(user);
+                    _accessor.HttpContext.Session.SetObjectAsJson("LoggedInUser", RetrievedUser);
                     if (RetrievedUser.IDNumber != 0)
                     {
                         

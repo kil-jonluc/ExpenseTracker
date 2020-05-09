@@ -4,15 +4,21 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using ExpenseTracker.Helpers;
 using ExpenseTracker.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Session;
 
 namespace ExpenseTracker.Controllers
 {
     public class UserController : Controller
     {
+        private readonly IHttpContextAccessor _accessor;
+        public UserController(IHttpContextAccessor httpContextAccessor)
+        {
+            _accessor = httpContextAccessor;
+        }
+
         User ActiveUser = new User();
 
         //connection string to the database
@@ -199,29 +205,12 @@ namespace ExpenseTracker.Controllers
         public User GetUserFromDataBase(User user)
         {
             User ReturnUser = new User();
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                SqlCommand cmd = new SqlCommand("spRetrieve_User", connection);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@UserName", user.userName);
-                cmd.Parameters.AddWithValue("@Password", user.password);
-
-                SqlDataReader reader = cmd.ExecuteReader();
-                
-                while (reader.Read())
-                {
-                    ReturnUser.IDNumber = reader.GetInt32(0);
-                    ReturnUser.FirstName = reader.GetString(1);
-                    ReturnUser.LastName = reader.GetString(2);
-                    ReturnUser.email = reader.GetString(3);
-                    ReturnUser.userName = reader.GetString(4);
-                    ReturnUser.password = reader.GetString(5);
-                    ReturnUser.phoneNumber = reader.GetString(6);
-                    ReturnUser.SSN = reader.GetString(7);
-                }
-            }
+            UserDB userDB = new UserDB();
+            ReturnUser = userDB.GetUserFromDataBase(user);
+            
             ActiveUser = ReturnUser;
+
+            _accessor.HttpContext.Session.SetObjectAsJson("LoggedInUser", ReturnUser);
             return ReturnUser;
         }
         #endregion
@@ -229,9 +218,10 @@ namespace ExpenseTracker.Controllers
         //**************EDITS USER ************** 
         #region Edit User
         // GET: Dashboard/Edit
-        public ActionResult EditUser()
+        public ActionResult EditUser(int IDNumber)
         {
-            return View(ActiveUser);
+            var temp = _accessor.HttpContext.Session.GetObjectFromJson<User>("LoggedInUser");
+            return View(temp);
         }
 
         // POST: Dashboard/Edit

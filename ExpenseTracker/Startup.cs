@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Session;
+using Microsoft.AspNetCore.Http;
 
 namespace ExpenseTracker
 {
@@ -29,6 +30,8 @@ namespace ExpenseTracker
             //I am adding the below three methods for the session set up
             services.AddMvc();
             services.AddDistributedMemoryCache();
+            services.AddHttpContextAccessor();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSession(options => {
                 options.IdleTimeout = TimeSpan.FromMinutes(10);//You can set Time   
             });
