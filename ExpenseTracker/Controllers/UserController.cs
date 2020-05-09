@@ -19,8 +19,6 @@ namespace ExpenseTracker.Controllers
             _accessor = httpContextAccessor;
         }
 
-        User ActiveUser = new User();
-
         //connection string to the database
         const string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=ExpenseTrackerDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 
@@ -208,8 +206,6 @@ namespace ExpenseTracker.Controllers
             UserDB userDB = new UserDB();
             ReturnUser = userDB.GetUserFromDataBase(user);
             
-            ActiveUser = ReturnUser;
-
             _accessor.HttpContext.Session.SetObjectAsJson("LoggedInUser", ReturnUser);
             return ReturnUser;
         }

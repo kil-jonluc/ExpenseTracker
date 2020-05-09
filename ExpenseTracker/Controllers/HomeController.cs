@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using ExpenseTracker.Models;
 using Microsoft.AspNetCore.Http;
 using ExpenseTracker.Helpers;
@@ -15,7 +10,6 @@ namespace ExpenseTracker.Controllers
     public class HomeController : Controller
     {
         private readonly IHttpContextAccessor _accessor;
-
 
         public HomeController(IHttpContextAccessor httpContextAccessor)
         {
@@ -46,7 +40,7 @@ namespace ExpenseTracker.Controllers
         // GET: Home/LoinIn
         public IActionResult Login()
         {        
-            //login in view returns the view of log in with a new user class as a parameter
+            //login view returns the view of login with a new user class as a parameter
             return View("Login", new User());
         }
 

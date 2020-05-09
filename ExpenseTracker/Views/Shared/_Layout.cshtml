@@ -24,7 +24,15 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        <li class="p-2 flex-fill"></li>
+                        <li>
+                            <a href="@Url.ActionLink("Login", "Home")" class="btn btn-primary" align="right">Login</a>
+                        </li>
+                        <li class="float-right">
+                            <a href="@Url.ActionLink("CreateUser", "User")" class="btn btn-primary">Create Profile</a>
+                        </li>
                     </ul>
+
                 </div>
             </div>
         </nav>
