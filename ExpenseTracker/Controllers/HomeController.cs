@@ -77,10 +77,9 @@ namespace ExpenseTracker.Controllers
                     //creates an instance of the user controller and then calls the method that retrieves the correct user from the data base
                     UserDB userDB = new UserDB();
                     User RetrievedUser = userDB.GetUserFromDataBase(user);
-                    _accessor.HttpContext.Session.SetObjectAsJson("LoggedInUser", RetrievedUser);
                     if (RetrievedUser.IDNumber != 0)
                     {
-                        
+                        _accessor.HttpContext.Session.SetObjectAsJson("LoggedInUser", RetrievedUser);
                         //if there is not error then the user is redirected to the dashboard
                         return RedirectToAction("Dashboard", "User", RetrievedUser);
                     }
