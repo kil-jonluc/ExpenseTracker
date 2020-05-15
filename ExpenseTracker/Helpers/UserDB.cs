@@ -11,7 +11,9 @@ namespace ExpenseTracker.Helpers
     public class UserDB
     {
         //connection string to the database
+        //const string connectionString = @"Data Source=MICHAELCOMPUTER\SQLSERVER2016;Initial Catalog=ExpenseTrackerDB;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False";
         const string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=ExpenseTrackerDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+
 
         public User GetUserFromDataBase(User user)
         {
