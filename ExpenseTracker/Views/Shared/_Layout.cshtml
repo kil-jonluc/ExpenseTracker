@@ -33,6 +33,12 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                         <li class="p-2 flex-fill"></li>
+                        <li class="float-right">
+                            @if (loggedInUser == null)
+                            {
+                            <a href="@Url.ActionLink("CreateUser", "User")" class="btn btn-primary">Create Profile</a>
+                            }
+                        </li>
                         <li>
                             @if (loggedInUser != null)
                             {
@@ -43,9 +49,6 @@
                                 <a href="@Url.Action("Login", "Home")" class="btn btn-primary" align="right">Login</a>
 
                             }
-                        </li>
-                        <li class="float-right">
-                            <a href="@Url.ActionLink("CreateUser", "User")" class="btn btn-primary">Create Profile</a>
                         </li>
                     </ul>
 
