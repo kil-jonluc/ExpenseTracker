@@ -32,6 +32,7 @@ namespace ExpenseTracker
             services.AddDistributedMemoryCache();
             services.AddHttpContextAccessor();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddSession(options => {
                 options.IdleTimeout = TimeSpan.FromMinutes(10);//You can set Time   
             });

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ExpenseTracker.Models;
 using Microsoft.AspNetCore.Http;
 using ExpenseTracker.Helpers;
+using System;
 
 namespace ExpenseTracker.Controllers
 {
@@ -91,13 +92,21 @@ namespace ExpenseTracker.Controllers
                     }
                     
                 }
-                catch
+                catch(Exception ex)
                 {
                     //otherwise this goes back to the login page
                     return Login();
                 }
 
             }
+        }
+
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            // clear anything in session on logout
+            _accessor.HttpContext.Session.Clear();
+            return RedirectToAction("Index");
         }
     }
 }

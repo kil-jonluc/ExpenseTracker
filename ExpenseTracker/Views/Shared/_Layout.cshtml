@@ -1,4 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@using ExpenseTracker.Models 
+@inject IHttpContextAccessor HttpContextAccessor
+@{ 
+    // Get logged in user from session, if available
+    User loggedInUser = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<User>("LoggedInUser");
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -26,7 +34,15 @@
                         </li>
                         <li class="p-2 flex-fill"></li>
                         <li>
-                            <a href="@Url.ActionLink("Login", "Home")" class="btn btn-primary" align="right">Login</a>
+                            @if (loggedInUser != null)
+                            {
+                                <a href="@Url.Action("Logout", "Home")" class="btn btn-primary" align="right">Login Out</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Login", "Home")" class="btn btn-primary" align="right">Login</a>
+
+                            }
                         </li>
                         <li class="float-right">
                             <a href="@Url.ActionLink("CreateUser", "User")" class="btn btn-primary">Create Profile</a>
