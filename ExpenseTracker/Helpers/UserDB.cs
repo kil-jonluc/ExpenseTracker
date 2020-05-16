@@ -47,11 +47,11 @@ namespace ExpenseTracker.Helpers
                     // If they don't have an Id, make them an employee
                     if(reader.GetValue(8) != DBNull.Value)
                     {
-                        ReturnUser.Role = reader.GetInt32(8);
+                        ReturnUser.RoleId = reader.GetInt32(8);
                     }
                     else
                     {
-                        ReturnUser.Role = 1;
+                        ReturnUser.RoleId = 1;
                     }
                 }
             }
@@ -77,6 +77,7 @@ namespace ExpenseTracker.Helpers
                     cmd.Parameters.AddWithValue("@Password", user.password);
                     cmd.Parameters.AddWithValue("@PhoneNumber", user.phoneNumber);
                     cmd.Parameters.AddWithValue("@SSN", user.SSN);
+                    cmd.Parameters.AddWithValue("@RoleId", user.RoleId);
 
                     //if rows change is value then you know that it this worked correctly
                     int rowsChanged = cmd.ExecuteNonQuery();

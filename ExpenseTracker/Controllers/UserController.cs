@@ -22,14 +22,6 @@ namespace ExpenseTracker.Controllers
             _configuration = configuration;
         }
 
-
-        // GET: User
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-
         //**************CREATES NEW USER************** 
         #region Create New User
         // GET: User/Create
@@ -183,8 +175,11 @@ namespace ExpenseTracker.Controllers
         [HttpPost]
         public IActionResult CreateEmployerUser(User user)
         {
-
-            return View(new User());
+            UserDB userDB = new UserDB(_configuration);
+            // Set user a employer type (0), would prefer an enum but this works for now
+            user.RoleId = 0;
+            userDB.StoreUserInDbTable(user);
+            return View("CreateSuccess");
         }
     }
 }
