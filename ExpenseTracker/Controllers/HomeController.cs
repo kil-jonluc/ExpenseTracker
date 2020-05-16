@@ -4,6 +4,7 @@ using ExpenseTracker.Models;
 using Microsoft.AspNetCore.Http;
 using ExpenseTracker.Helpers;
 using System;
+using Microsoft.Extensions.Configuration;
 
 namespace ExpenseTracker.Controllers
 {
@@ -11,10 +12,12 @@ namespace ExpenseTracker.Controllers
     public class HomeController : Controller
     {
         private readonly IHttpContextAccessor _accessor;
+        private readonly IConfiguration _configuration;
 
-        public HomeController(IHttpContextAccessor httpContextAccessor)
+        public HomeController(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
             _accessor = httpContextAccessor;
+            _configuration = configuration;
         }
 
         
@@ -76,7 +79,7 @@ namespace ExpenseTracker.Controllers
                 try
                 {
                     //creates an instance of the user controller and then calls the method that retrieves the correct user from the data base
-                    UserDB userDB = new UserDB();
+                    UserDB userDB = new UserDB(_configuration);
                     User RetrievedUser = userDB.GetUserFromDataBase(user);
                     if (RetrievedUser.IDNumber != 0)
                     {

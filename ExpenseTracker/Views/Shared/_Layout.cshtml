@@ -36,7 +36,13 @@
                         <li class="float-right">
                             @if (loggedInUser == null)
                             {
-                            <a href="@Url.ActionLink("CreateUser", "User")" class="btn btn-primary">Create Profile</a>
+                                <a href="@Url.ActionLink("CreateUser", "User")" class="btn btn-primary">Create Employee Profile</a>
+                            }
+                        </li>
+                        <li class="float-right">
+                            @if (loggedInUser == null)
+                            {
+                                <a href="@Url.ActionLink("CreateEmployerUser", "User")" class="btn btn-primary">Create Employer Profile</a>
                             }
                         </li>
                         <li>
