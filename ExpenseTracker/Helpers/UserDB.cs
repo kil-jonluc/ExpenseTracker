@@ -38,9 +38,19 @@ namespace ExpenseTracker.Helpers
                     ReturnUser.password = reader.GetString(5);
                     ReturnUser.phoneNumber = reader.GetString(6);
                     ReturnUser.SSN = reader.GetString(7);
+                    // for backward compatability, we can't assume all users have a role Id
+                    // If they don't have an Id, make them an employee
+                    if(reader.GetValue(8) != DBNull.Value)
+                    {
+                        ReturnUser.Role = reader.GetInt32(8);
+                    }
+                    else
+                    {
+                        ReturnUser.Role = 1;
+                    }
                 }
             }
             return ReturnUser;
         }
-        }
+    }
 }
