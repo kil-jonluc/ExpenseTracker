@@ -27,5 +27,6 @@ namespace ExpenseTracker.Models
 
         public int IDNumber { get; set; }
         public int RoleId { get; set; }
+        public int EmployerId { get; set; }
     }
 }
