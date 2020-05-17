@@ -33,7 +33,8 @@ namespace ExpenseTracker.Controllers
         // GET: Expense/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            ExpenseDB expenseDb = new ExpenseDB(_configuration);
+            return View(expenseDb.GetExpenseById(id));
         }
 
         // GET: Expense/Create
@@ -49,11 +50,19 @@ namespace ExpenseTracker.Controllers
         {
             try
             {
-                // Currently, hard code all expenses as belonging to company 1
-                expense.EmployerId = 1;
-                ExpenseDB expenseDB = new ExpenseDB(_configuration);
-                expenseDB.InsertExpense(expense);
-                return RedirectToAction("Index");
+                User user = _accessor.HttpContext.Session.GetObjectFromJson<User>("LoggedInUser");
+
+                // sanity check, should never by false
+                if (user != null)
+                {
+                    // Currently, hard code all expenses as belonging to company 1
+                    // Need the expense to be connected to the same employer as the employee creating the expense
+                    // TODO: Add employer to User model
+                    expense.EmployerId = 1;
+                    ExpenseDB expenseDB = new ExpenseDB(_configuration);
+                    expenseDB.InsertExpense(expense);
+                }
+                    return RedirectToAction("Index");
             }
             catch
             {
@@ -64,42 +73,45 @@ namespace ExpenseTracker.Controllers
         // GET: Expense/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            ExpenseDB expenseDb = new ExpenseDB(_configuration);
+            return View(expenseDb.GetExpenseById(id));
         }
 
         // POST: Expense/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(Expense expense)
         {
             try
             {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
+                ExpenseDB expenseDB = new ExpenseDB(_configuration);
+                expenseDB.UpdateExpense(expense);
+                return RedirectToAction("Index");
             }
             catch
             {
-                return View();
+                return View(expense);
             }
         }
 
         // GET: Expense/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            ExpenseDB expenseDb = new ExpenseDB(_configuration);
+            return View(expenseDb.GetExpenseById(id));
         }
 
         // POST: Expense/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult DeleteConfirmed(int id)
         {
             try
             {
-                // TODO: Add delete logic here
+                ExpenseDB expenseDb = new ExpenseDB(_configuration);
+                expenseDb.DeleteExpense(id);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
             catch
             {

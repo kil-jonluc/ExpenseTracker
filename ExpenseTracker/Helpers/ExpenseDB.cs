@@ -1,4 +1,5 @@
 ﻿using ExpenseTracker.Models;
+using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -46,6 +47,68 @@ namespace ExpenseTracker.Helpers
             }
         }
 
+        public void UpdateExpense(Expense expense)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    connection.Open();
+                    SqlCommand cmd = new SqlCommand("Expense_Update", connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Id", expense.Id);
+                    cmd.Parameters.AddWithValue("@Description", expense.Description);
+                    cmd.Parameters.AddWithValue("@Project", expense.Project);
+                    cmd.Parameters.AddWithValue("@Date", expense.Date);
+                    cmd.Parameters.AddWithValue("@Category", expense.Category);
+                    cmd.Parameters.AddWithValue("@Merchant", expense.Merchant);
+                    cmd.Parameters.AddWithValue("@Amount", expense.Amount);
+                    cmd.Parameters.AddWithValue("@ReportNumber", expense.ReportNumber);
+
+                    //if rows change has a value then you know that it this worked correctly
+                    int rowsChanged = cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                var temp = ex.Message;
+            }
+        }
+
+        public Expense GetExpenseById(int expenseId)
+        {
+            Expense expense = null;
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand cmd = new SqlCommand("Expense_GetById", connection);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Id", expenseId);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        expense = new Expense()
+                        {
+                            Id = reader.GetInt32(0),
+                            Description = reader.GetString(1),
+                            Project = reader.GetString(2),
+                            Date = reader.GetDateTime(3),
+                            Category = reader.GetString(4),
+                            Merchant = reader.GetString(5),
+                            Amount = reader.GetDecimal(6),
+                            ReportNumber = reader.GetString(7),
+                            EmployerId = reader.GetInt32(8)
+                        };
+                    }
+                }
+            }
+
+            return expense;
+        }
+
         public IEnumerable<Expense> GetExpensesByEmployer(int employerId)
         {
             List<Expense> expenses = new List<Expense>();
@@ -63,6 +126,7 @@ namespace ExpenseTracker.Helpers
                     {
                         expenses.Add(new Expense()
                         {
+                            Id = reader.GetInt32(0),
                             Description = reader.GetString(1),
                             Project = reader.GetString(2),
                             Date = reader.GetDateTime(3),
@@ -77,6 +141,19 @@ namespace ExpenseTracker.Helpers
                 }
             }
             return expenses;
+        }
+
+        public void DeleteExpense(int expenseId)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand cmd = new SqlCommand("Expense_Delete", connection);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Id", expenseId);
+
+                int rowsChanged = cmd.ExecuteNonQuery();
+            }
         }
     }
 }
