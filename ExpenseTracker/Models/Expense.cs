@@ -24,15 +24,10 @@ namespace ExpenseTracker.Models
         public string Merchant { get; set; }
 
         [DisplayName("Amount")]
-        public string Amount { get; set; }
+        public decimal Amount { get; set; }
 
         [DisplayName("Report Number")]
         public string ReportNumber { get; set; }
-
-
-
-
-
-
+        public int EmployerId { get; set; }
     }
 }

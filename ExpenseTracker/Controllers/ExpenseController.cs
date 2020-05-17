@@ -2,60 +2,109 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ExpenseTracker.Helpers;
 using ExpenseTracker.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace ExpenseTracker.Controllers
 {
     public class ExpenseController : Controller
     {
-        public IActionResult Index()
+        private readonly IHttpContextAccessor _accessor;
+        private readonly IConfiguration _configuration;
+
+        public ExpenseController(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+        {
+            _accessor = httpContextAccessor;
+            _configuration = configuration;
+        }
+
+        // GET: Expense
+        public ActionResult Index()
+        {
+            // In the future, pass the employer's id to get the list of expenses for the employer
+            ExpenseDB expenseDB = new ExpenseDB(_configuration);
+            var expenses = expenseDB.GetExpensesByEmployer(1);
+            return View(expenses);
+        }
+
+        // GET: Expense/Details/5
+        public ActionResult Details(int id)
         {
             return View();
         }
 
-        // GET: User/Create
-        public IActionResult NewExpense()
+        // GET: Expense/Create
+        public ActionResult Create()
         {
-            return View("NewExpense", new Expense());
+            return View();
         }
 
-        // POST: User/Create
+        // POST: Expense/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult NewExpense(Expense expense)
+        public ActionResult Create(Expense expense)
         {
-
-            //sends the newly created expense to a list
-            //AddExpenseToList(expense);
-
-            //need to add new expense to the data base 
-            AddExpenseToDatabase(expense);
-            //return to the dashboard
-            return RedirectToAction("Dashboard", "User");
+            try
+            {
+                // Currently, hard code all expenses as belonging to company 1
+                expense.EmployerId = 1;
+                ExpenseDB expenseDB = new ExpenseDB(_configuration);
+                expenseDB.InsertExpense(expense);
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View(expense);
+            }
         }
 
-        // need a method to edit and expense when an expenses is clicked on it pulls that item from the expense list 
-        //then it finds the old one in the data base and updates it and then it updates the list from the database
-
-
-
-
-
-        //add new expense to list
-        public void AddExpenseToList(Expense expense)
+        // GET: Expense/Edit/5
+        public ActionResult Edit(int id)
         {
-            List<Expense> ExpenseList = new List<Expense>();
-            ExpenseList.Add(expense);
+            return View();
         }
 
-        public void AddExpenseToDatabase(Expense expense)
+        // POST: Expense/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, IFormCollection collection)
         {
+            try
+            {
+                // TODO: Add update logic here
 
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
         }
 
-        //need function to sort list by expense date
+        // GET: Expense/Delete/5
+        public ActionResult Delete(int id)
+        {
+            return View();
+        }
 
-        //method that fills the list with all expenses in the database then calls the sorting function
+        // POST: Expense/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, IFormCollection collection)
+        {
+            try
+            {
+                // TODO: Add delete logic here
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
     }
 }
