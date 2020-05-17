@@ -53,6 +53,45 @@ namespace ExpenseTracker.Helpers
                     {
                         ReturnUser.RoleId = 1;
                     }
+                    ReturnUser.EmployerId = reader.GetInt32(9);
+                }
+            }
+            return ReturnUser;
+        }
+
+        public User GetUserById(int userId)
+        {
+            User ReturnUser = new User();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand cmd = new SqlCommand("User_GetById", connection);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Id", userId);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    ReturnUser.IDNumber = reader.GetInt32(0);
+                    ReturnUser.FirstName = reader.GetString(1);
+                    ReturnUser.LastName = reader.GetString(2);
+                    ReturnUser.email = reader.GetString(3);
+                    ReturnUser.userName = reader.GetString(4);
+                    ReturnUser.password = reader.GetString(5);
+                    ReturnUser.phoneNumber = reader.GetString(6);
+                    ReturnUser.SSN = reader.GetString(7);
+                    // for backward compatability, we can't assume all users have a role Id
+                    // If they don't have an Id, make them an employee
+                    if (reader.GetValue(8) != DBNull.Value)
+                    {
+                        ReturnUser.RoleId = reader.GetInt32(8);
+                    }
+                    else
+                    {
+                        ReturnUser.RoleId = 1;
+                    }
+                    ReturnUser.EmployerId = reader.GetInt32(9);
                 }
             }
             return ReturnUser;
@@ -78,6 +117,7 @@ namespace ExpenseTracker.Helpers
                     cmd.Parameters.AddWithValue("@PhoneNumber", user.phoneNumber);
                     cmd.Parameters.AddWithValue("@SSN", user.SSN);
                     cmd.Parameters.AddWithValue("@RoleId", user.RoleId);
+                    cmd.Parameters.AddWithValue("@EmployerId", user.EmployerId);
 
                     //if rows change is value then you know that it this worked correctly
                     int rowsChanged = cmd.ExecuteNonQuery();

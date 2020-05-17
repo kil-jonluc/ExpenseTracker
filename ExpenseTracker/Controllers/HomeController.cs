@@ -85,7 +85,7 @@ namespace ExpenseTracker.Controllers
                     {
                         _accessor.HttpContext.Session.SetObjectAsJson("LoggedInUser", RetrievedUser);
                         //if there is not error then the user is redirected to the dashboard
-                        return RedirectToAction("Dashboard", "User", RetrievedUser);
+                        return RedirectToAction("Dashboard", "User");
                     }
                     else
                     {

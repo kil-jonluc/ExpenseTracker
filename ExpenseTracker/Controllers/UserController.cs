@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Security.Cryptography.Xml;
 using System.Threading.Tasks;
 using ExpenseTracker.Helpers;
 using ExpenseTracker.Models;
@@ -73,6 +74,9 @@ namespace ExpenseTracker.Controllers
             }
             else
             {
+                // For now, hard code in Employer Id as we don't have functionality for selecting an employer yet
+                user.EmployerId = 1;
+
                 //calls a stored procedure that stores the new user data in a table 
                 userDB.StoreUserInDbTable(user);
 
@@ -159,10 +163,16 @@ namespace ExpenseTracker.Controllers
 
         //************** USER DASHBOARD************** 
         #region User Dashboard
-        public IActionResult Dashboard(User user)
+        public IActionResult Dashboard()
         {
-            ViewBag.User = user;
-            return View(user);
+            EmployerDB employerDB = new EmployerDB(_configuration);
+            User user = _accessor.HttpContext.Session.GetObjectFromJson<User>("LoggedInUser");
+            DashboardViewModel dashboardVM = new DashboardViewModel()
+            {
+                User = user,
+                Employer = employerDB.GetEmployerById(user.EmployerId)
+            };
+            return View(dashboardVM);
         }
         #endregion
 
@@ -178,6 +188,9 @@ namespace ExpenseTracker.Controllers
             UserDB userDB = new UserDB(_configuration);
             // Set user a employer type (0), would prefer an enum but this works for now
             user.RoleId = 0;
+
+            // For now, hard code in Employer Id as we don't have functionality for selecting an employer yet
+            user.EmployerId = 1;
             userDB.StoreUserInDbTable(user);
             return View("CreateSuccess");
         }
