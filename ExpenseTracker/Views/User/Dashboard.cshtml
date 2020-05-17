@@ -5,9 +5,14 @@
 }
 
 <h1>Dashboard</h1>
-
-<a href="@Url.ActionLink("NewExpense", "Expense")" type="button" class="btn btn-primary btn-lg btn-block">Enter New Expense</a>
-
+<div class="row">
+    <div class="offset-3 col-lg-3">
+        <a href="@Url.ActionLink("Create", "Expense")" type="button" class="btn btn-primary btn-lg btn-block">Enter New Expense</a>
+    </div>
+    <div class="col-lg-3">
+        <a href="@Url.ActionLink("Index", "Expense")" type="button" class="btn btn-primary btn-lg btn-block">View Expenses</a>
+    </div>
+</div>
 <div>
     <h4>User</h4>
     <hr />
@@ -51,14 +56,14 @@
     </dl>
 </div>
 <div>
-    @using(Html.BeginForm("EditUser", "User", FormMethod.Get))
+    @using (Html.BeginForm("EditUser", "User", FormMethod.Get))
     {
         @Html.HiddenFor(m => m.IDNumber)
-        <input type="submit" class="btn btn-primary btn-lg btn-block" value="Edit Account Information"/>
+        <input type="submit" class="btn btn-primary btn-lg btn-block" value="Edit Account Information" />
         @*<a href="@Url.ActionLink("EditUser")" type="button" class="btn btn-primary btn-lg btn-block" >Edit User</a>*@
     }
-    
-    
+
+
 </div>
 
-***we need a thing that prints the expenses list onto a table***
+    ***we need a thing that prints the expenses list onto a table***
