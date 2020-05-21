@@ -45,5 +45,31 @@ namespace ExpenseTracker.Helpers
 
             return employer;
         }
+
+        public IEnumerable<Employer> GetAll()
+        {
+            List<Employer> employers = new List<Employer>(); ;
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand cmd = new SqlCommand("Employer_GetAll", connection);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        employers.Add(new Employer()
+                        {
+                            Id = reader.GetInt32(0),
+                            CompanyName = reader.GetString(1)
+                        });
+                    }
+                }
+            }
+
+            return employers;
+        }
     }
 }
