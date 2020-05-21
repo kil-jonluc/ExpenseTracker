@@ -1,4 +1,5 @@
-﻿@model ExpenseTracker.Models.User
+﻿@model ExpenseTracker.Models.UserViewModel
+@using ExpenseTracker.Helpers
 
 @{
     ViewData["Title"] = "CreateEmployerUser";
@@ -11,42 +12,48 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="CreateEmployerUser", method="post">
+        <form asp-action="CreateEmployerUser" , method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
+                <label asp-for="User.FirstName" class="control-label"></label>
+                <input asp-for="User.FirstName" class="form-control" />
+                <span asp-validation-for="User.FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" />
-                <span asp-validation-for="LastName" class="text-danger"></span>
+                <label asp-for="User.LastName" class="control-label"></label>
+                <input asp-for="User.LastName" class="form-control" />
+                <span asp-validation-for="User.LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="email" class="control-label"></label>
-                <input asp-for="email" class="form-control" />
-                <span asp-validation-for="email" class="text-danger"></span>
+                <label asp-for="User.email" class="control-label"></label>
+                <input asp-for="User.email" class="form-control" />
+                <span asp-validation-for="User.email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="userName" class="control-label"></label>
-                <input asp-for="userName" class="form-control" />
-                <span asp-validation-for="userName" class="text-danger"></span>
+                <label asp-for="User.userName" class="control-label"></label>
+                <input asp-for="User.userName" class="form-control" />
+                <span asp-validation-for="User.userName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="password" class="control-label"></label>
-                <input asp-for="password" class="form-control" />
-                <span asp-validation-for="password" class="text-danger"></span>
+                <label asp-for="User.password" class="control-label"></label>
+                <input asp-for="User.password" class="form-control" />
+                <span asp-validation-for="User.password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="phoneNumber" class="control-label"></label>
-                <input asp-for="phoneNumber" class="form-control" />
-                <span asp-validation-for="phoneNumber" class="text-danger"></span>
+                <label asp-for="User.phoneNumber" class="control-label"></label>
+                <input asp-for="User.phoneNumber" class="form-control" />
+                <span asp-validation-for="User.phoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="SSN" class="control-label"></label>
-                <input asp-for="SSN" class="form-control" />
-                <span asp-validation-for="SSN" class="text-danger"></span>
+                <label asp-for="User.SSN" class="control-label"></label>
+                <input asp-for="User.SSN" class="form-control" />
+                <span asp-validation-for="User.SSN" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="User.EmployerId" class="control-label"></label>
+                @Html.DropDownListFor(m => m.User.EmployerId, Model.Employers.ToSelectList(), "Please Select", new { required = true, @class = "form-control" })
+                @*<input asp-for="SSN" class="form-control" />*@
+                <span asp-validation-for="User.EmployerId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

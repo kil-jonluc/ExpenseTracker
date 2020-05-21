@@ -28,7 +28,11 @@ namespace ExpenseTracker.Controllers
         // GET: User/Create
         public IActionResult CreateUser()
         {
-            return View("CreateUser", new User());
+            UserViewModel userVM = new UserViewModel() {
+                User = new User(),
+                Employers = new EmployerDB(_configuration).GetAll()
+            };
+            return View("CreateUser", userVM);
         }
 
         //collects new user information 
@@ -74,9 +78,6 @@ namespace ExpenseTracker.Controllers
             }
             else
             {
-                // For now, hard code in Employer Id as we don't have functionality for selecting an employer yet
-                user.EmployerId = 1;
-
                 //calls a stored procedure that stores the new user data in a table 
                 userDB.StoreUserInDbTable(user);
 
@@ -179,7 +180,12 @@ namespace ExpenseTracker.Controllers
         [HttpGet]
         public IActionResult CreateEmployerUser()
         {
-            return View(new User());
+            UserViewModel userVM = new UserViewModel()
+            {
+                User = new User(),
+                Employers = new EmployerDB(_configuration).GetAll()
+            };
+            return View(userVM);
         }
 
         [HttpPost]
@@ -189,8 +195,6 @@ namespace ExpenseTracker.Controllers
             // Set user a employer type (0), would prefer an enum but this works for now
             user.RoleId = 0;
 
-            // For now, hard code in Employer Id as we don't have functionality for selecting an employer yet
-            user.EmployerId = 1;
             userDB.StoreUserInDbTable(user);
             return View("CreateSuccess");
         }
