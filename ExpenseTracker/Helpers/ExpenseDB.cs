@@ -37,6 +37,7 @@ namespace ExpenseTracker.Helpers
                     cmd.Parameters.AddWithValue("@Amount", expense.Amount);
                     cmd.Parameters.AddWithValue("@ReportNumber", expense.ReportNumber);
                     cmd.Parameters.AddWithValue("@EmployerId", expense.EmployerId);
+                    cmd.Parameters.AddWithValue("@Status", expense.Status);
 
                     //if rows change is value then you know that it this worked correctly
                     int rowsChanged = cmd.ExecuteNonQuery();
@@ -64,6 +65,8 @@ namespace ExpenseTracker.Helpers
                     cmd.Parameters.AddWithValue("@Merchant", expense.Merchant);
                     cmd.Parameters.AddWithValue("@Amount", expense.Amount);
                     cmd.Parameters.AddWithValue("@ReportNumber", expense.ReportNumber);
+                    cmd.Parameters.AddWithValue("@Status", expense.Status);
+
 
                     //if rows change has a value then you know that it this worked correctly
                     int rowsChanged = cmd.ExecuteNonQuery();
@@ -100,7 +103,8 @@ namespace ExpenseTracker.Helpers
                             Merchant = reader.GetString(5),
                             Amount = reader.GetDecimal(6),
                             ReportNumber = reader.GetString(7),
-                            EmployerId = reader.GetInt32(8)
+                            EmployerId = reader.GetInt32(8),
+                            Status = (Statuses)reader.GetInt32(10)
                         };
                     }
                 }
@@ -134,7 +138,8 @@ namespace ExpenseTracker.Helpers
                             Merchant = reader.GetString(5),
                             Amount = reader.GetDecimal(6),
                             ReportNumber = reader.GetString(7),
-                            EmployerId = reader.GetInt32(8)
+                            EmployerId = reader.GetInt32(8),
+                            Status = (Statuses)reader.GetInt32(10)
                         });
 
                     }
