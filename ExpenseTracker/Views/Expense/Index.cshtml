@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<ExpenseTracker.Models.Expense>
+@using ExpenseTracker.Models;
+@using ExpenseTracker.Helpers;
 
 @{
     ViewData["Title"] = "Index";
@@ -34,6 +36,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.ReportNumber)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -63,7 +68,13 @@
                     @Html.DisplayFor(modelItem => item.ReportNumber)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+                    @{
+                        string statusDescription = EnumHelpers<Statuses>.GetDescription(item.Status);
+                    }
+                    @statusDescription
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
                     @*@Html.ActionLink("Details", "Details", new { id = item.Id }) |*@
                     @Html.ActionLink("Delete", "Delete", new { id = item.Id })
                 </td>

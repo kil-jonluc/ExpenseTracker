@@ -70,12 +70,15 @@
     </dl>
 </div>
 <div>
-    @using (Html.BeginForm("EditUser", "User", FormMethod.Get))
-    {
         @Html.HiddenFor(m => m.User.IDNumber)
-        <input type="submit" class="btn btn-primary btn-lg btn-block" value="Edit Account Information" />
-        @*<a href="@Url.ActionLink("EditUser")" type="button" class="btn btn-primary btn-lg btn-block" >Edit User</a>*@
-    }
+    <div class="row">
+        <div class="offset-3 col-lg-3">
+            <a href="@Url.ActionLink("EditUser", "User", new { IDNumber = Model.User.IDNumber})" type="button" class="btn btn-primary btn-lg btn-block">Edit Account Information</a>
+        </div>
+        <div class="col-lg-3">
+            <a href="@Url.ActionLink("Edit", "Employer", new { Id = Model.Employer.Id})" type="button" class="btn btn-primary btn-lg btn-block">Edit Employer</a>
+        </div>
+    </div>
 
 
 </div>

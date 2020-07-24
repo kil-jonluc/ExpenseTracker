@@ -71,5 +71,27 @@ namespace ExpenseTracker.Helpers
 
             return employers;
         }
+
+        public void UpdateEmployer(Employer employer)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    connection.Open();
+                    SqlCommand cmd = new SqlCommand("Employer_Update", connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Id", employer.Id);
+                    cmd.Parameters.AddWithValue("@CompanyName", employer.CompanyName);
+
+                    //if rows change has a value then you know that it this worked correctly
+                    int rowsChanged = cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                var temp = ex.Message;
+            }
+        }
     }
 }

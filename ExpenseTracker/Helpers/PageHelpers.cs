@@ -32,5 +32,23 @@ namespace ExpenseTracker.Helpers
                 return new SelectListItem(employer.CompanyName, employer.Id.ToString());
             }
         }
+
+        public static IEnumerable<SelectListItem> ToSelectList(this IEnumerable<Statuses> statuses)
+        {
+            if (statuses == null)
+            {
+                return null;
+            }
+            else
+            {
+                return statuses.Select(employer => employer.ToSelectList());
+            }
+        }
+
+        public static SelectListItem ToSelectList(this Statuses status)
+        {
+            
+            return new SelectListItem(EnumHelpers<Statuses>.GetDescription(status), status.ToString());
+        }
     }
 }
