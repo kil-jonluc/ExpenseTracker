@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Http
-@using ExpenseTracker.Models 
+@using ExpenseTracker.Models
 @inject IHttpContextAccessor HttpContextAccessor
-@{ 
+@{
     // Get logged in user from session, if available
     User loggedInUser = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<User>("LoggedInUser");
 }
@@ -27,32 +27,26 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            @if (loggedInUser == null)
+                            {
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="CreateUser">Create Employee Profile</a>
+                            }
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            @if (loggedInUser == null)
+                            {
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="CreateEmployerUser">Create Employer Profile</a>
+                            }
                         </li>
                         <li class="p-2 flex-fill"></li>
-                        <li class="float-right">
-                            @if (loggedInUser == null)
-                            {
-                                <a href="@Url.ActionLink("CreateUser", "User")" class="btn btn-primary">Create Employee Profile</a>
-                            }
-                        </li>
-                        <li class="float-right">
-                            @if (loggedInUser == null)
-                            {
-                                <a href="@Url.ActionLink("CreateEmployerUser", "User")" class="btn btn-primary">Create Employer Profile</a>
-                            }
-                        </li>
                         <li>
                             @if (loggedInUser != null)
                             {
-                                <a href="@Url.Action("Logout", "Home")" class="btn btn-primary" align="right">Log Out</a>
+                                <a href="@Url.Action("Logout", "Home")" class="btn btn-dark" align="right">Log Out</a>
                             }
                             else
                             {
-                                <a href="@Url.Action("Login", "Home")" class="btn btn-primary" align="right">Login</a>
+                                <a href="@Url.Action("Login", "Home")" class="btn btn-dark" align="right">Login</a>
 
                             }
                         </li>
@@ -70,7 +64,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2019 - ExpenseTracker - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2020 - ExpenseTracker
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

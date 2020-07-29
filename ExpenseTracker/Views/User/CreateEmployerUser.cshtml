@@ -1,6 +1,5 @@
 ﻿@model ExpenseTracker.Models.UserViewModel
 @using ExpenseTracker.Helpers
-
 @{
     ViewData["Title"] = "CreateEmployerUser";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -8,7 +7,6 @@
 
 <h1>Create Employer</h1>
 
-<h4>User</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -56,7 +54,7 @@
                 <span asp-validation-for="User.EmployerId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-dark" />
             </div>
         </form>
     </div>

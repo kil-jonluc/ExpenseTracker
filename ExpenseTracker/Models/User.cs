@@ -26,7 +26,10 @@ namespace ExpenseTracker.Models
         public string SSN { get; set; }
 
         public int IDNumber { get; set; }
+
+        //I think that 0 is employer while 1 would be employee
         public int RoleId { get; set; }
+
         public int EmployerId { get; set; }
     }
 }

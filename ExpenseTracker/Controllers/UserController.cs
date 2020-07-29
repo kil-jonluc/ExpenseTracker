@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Security.Cryptography.Xml;
-using System.Threading.Tasks;
-using ExpenseTracker.Helpers;
+﻿using ExpenseTracker.Helpers;
 using ExpenseTracker.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,64 +21,67 @@ namespace ExpenseTracker.Controllers
         // GET: User/Create
         public IActionResult CreateUser()
         {
-            UserViewModel userVM = new UserViewModel() {
+            UserViewModel userVM = new UserViewModel()
+            {
                 User = new User(),
                 Employers = new EmployerDB(_configuration).GetAll()
             };
-            return View("CreateUser", userVM);
+            return View(userVM);
         }
 
         //collects new user information 
         // POST: User/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult CreateUser(User user)
         {
             //checks for errors in user data
-            bool isError = false;
+            //bool isError = false;
 
             UserDB userDB = new UserDB(_configuration);
+            user.RoleId = 0;
 
             //At this point and For testing purposes I am only validating the username and password 
             //Ensures the username is not null
-            if (user.userName == null)
-            {
-                ModelState.AddModelError("UserName", "Username Must Be Valid");
-                isError = true;
-            }
+            //if (user.userName == null)
+            //{
+            //    ModelState.AddModelError("UserName", "Username Must Be Valid");
+            //    isError = true;
+            //}
             //ADD need to have a check to see if the username is unique or not
-            if (user.userName != null)
-            {
-                bool not_unique = userDB.CheckIfUsernameAvalible(user);
-                if (not_unique)
-                {
-                    ModelState.AddModelError("UserName", "Choose A Unique Username");
-                    isError = true;
-                }
-            }
-
+            //if (user.userName != null)
+            //{
+            //    bool not_unique = userDB.CheckIfUsernameAvalible(user);
+            //    if (not_unique)
+            //    {
+            //        ModelState.AddModelError("UserName", "Choose A Unique Username");
+            //        isError = true;
+            //    }
+            //}
             //Ensures the password is null
-            if (user.password == null)
-            {
-                ModelState.AddModelError("password", "Password must be significant");
-                isError = true;
-            }
-
+            //if (user.password == null)
+            //{
+            //    ModelState.AddModelError("password", "Password must be significant");
+            //    isError = true;
+            //}
             //if there is an error create user view is returned
-            if (isError)
-            {
-                return View("CreateUser", user);
-            }
-            else
-            {
-                //calls a stored procedure that stores the new user data in a table 
-                userDB.StoreUserInDbTable(user);
+            //if (isError)
+            //{
+            //    return View("CreateUser", user);
+            //}
+            //else
+            //{
 
-                return View("CreateSuccess");
-            }
+            
+            
+            
+            //calls a stored procedure that stores the new user data in a table 
+            userDB.StoreUserInDbTable(user);
+            return View("CreateSuccess");
+            
+            
+            
+            //}
         }
-
-        
         #endregion
 
         //**************USER LOGIN METHODS************** 
@@ -95,7 +91,7 @@ namespace ExpenseTracker.Controllers
             User ReturnUser = new User();
             UserDB userDB = new UserDB(_configuration);
             ReturnUser = userDB.GetUserFromDataBase(user);
-            
+
             _accessor.HttpContext.Session.SetObjectAsJson("LoggedInUser", ReturnUser);
             return ReturnUser;
         }
@@ -115,7 +111,7 @@ namespace ExpenseTracker.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditUser(User user)
         {
-            
+
             try
             {
                 // TODO: Add update logic here
@@ -127,7 +123,7 @@ namespace ExpenseTracker.Controllers
                 return View();
             }
         }
-        
+
 
         // GET: User/Delete/5
         public ActionResult Delete(int id)
