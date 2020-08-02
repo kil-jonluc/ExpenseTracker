@@ -3,6 +3,7 @@ using ExpenseTracker.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System;
 
 namespace ExpenseTracker.Controllers
 {
@@ -10,10 +11,12 @@ namespace ExpenseTracker.Controllers
     {
         private readonly IHttpContextAccessor _accessor;
         private readonly IConfiguration _configuration;
+        private readonly UserDB _userDB;
         public UserController(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
             _accessor = httpContextAccessor;
             _configuration = configuration;
+            _userDB = new UserDB(configuration);
         }
 
         //**************CREATES NEW USER************** 
@@ -71,15 +74,15 @@ namespace ExpenseTracker.Controllers
             //else
             //{
 
-            
-            
-            
+
+
+
             //calls a stored procedure that stores the new user data in a table 
             userDB.StoreUserInDbTable(user);
             return View("CreateSuccess");
-            
-            
-            
+
+
+
             //}
         }
         #endregion
@@ -100,7 +103,7 @@ namespace ExpenseTracker.Controllers
         //**************EDITS USER ************** 
         #region Edit User
         // GET: Dashboard/Edit
-        public ActionResult EditUser(int IDNumber)
+        public ActionResult EditUser()         //public ActionResult EditUser(int IDNumber) not sure if the id parameter is needed 
         {
             var temp = _accessor.HttpContext.Session.GetObjectFromJson<User>("LoggedInUser");
             return View(temp);
@@ -112,16 +115,22 @@ namespace ExpenseTracker.Controllers
         public ActionResult EditUser(User user)
         {
 
-            try
-            {
-                // TODO: Add update logic here
 
-                return RedirectToAction("Dashboard", "User");
-            }
-            catch
+            if (ModelState.IsValid)
             {
-                return View();
+                try
+                {
+                    _accessor.HttpContext.Session.SetObjectAsJson("LoggedInUser", user);
+                    _userDB.UpdateUser(user);
+                    return RedirectToAction("Dashboard", "User");
+                }
+                catch (Exception ex)
+                {
+                }
             }
+
+            return View(user);
+
         }
 
 

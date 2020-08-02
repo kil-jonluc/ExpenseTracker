@@ -210,5 +210,36 @@ namespace ExpenseTracker.Helpers
             {
             }
         }
+
+        public void UpdateUser(User user)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+
+                    connection.Open();
+                    SqlCommand cmd = new SqlCommand("spUser_Update", connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@UserId", user.IDNumber);
+                    cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
+                    cmd.Parameters.AddWithValue("@LastName", user.LastName);
+                    cmd.Parameters.AddWithValue("@Email", user.email);
+                    cmd.Parameters.AddWithValue("@UserName", user.userName);
+                    cmd.Parameters.AddWithValue("@Password", user.password);
+                    cmd.Parameters.AddWithValue("@PhoneNumber", user.phoneNumber);
+                    cmd.Parameters.AddWithValue("@SSN", user.SSN);
+                    cmd.Parameters.AddWithValue("@RoleId", user.RoleId);
+                    cmd.Parameters.AddWithValue("@EmployerId", user.EmployerId);
+
+                    //if rows change has a value then you know that it this worked correctly
+                    int rowsChanged = cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                var temp = ex.Message;
+            }
+        }
     }
 }
