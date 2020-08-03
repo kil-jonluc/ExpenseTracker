@@ -58,7 +58,7 @@ namespace ExpenseTracker.Controllers
                     // Currently, hard code all expenses as belonging to company 1
                     // Need the expense to be connected to the same employer as the employee creating the expense
                     // TODO: Add employer to User model
-                    expense.EmployerId = 1;
+                    expense.EmployerId = user.EmployerId;
                     ExpenseDB expenseDB = new ExpenseDB(_configuration);
                     expenseDB.InsertExpense(expense);
                 }
@@ -74,6 +74,8 @@ namespace ExpenseTracker.Controllers
         public ActionResult Edit(int id)
         {
             ExpenseDB expenseDb = new ExpenseDB(_configuration);
+            User user = _accessor.HttpContext.Session.GetObjectFromJson<User>("LoggedInUser");
+            ViewBag.Type = user.RoleId; 
             return View(expenseDb.GetExpenseById(id));
         }
 
