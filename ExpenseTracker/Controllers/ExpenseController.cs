@@ -24,9 +24,19 @@ namespace ExpenseTracker.Controllers
         // GET: Expense
         public ActionResult Index()
         {
-            // In the future, pass the employer's id to get the list of expenses for the employer
+            // If employer look up by employer ID that matched user ID if employee then look them up based on user ID
             ExpenseDB expenseDB = new ExpenseDB(_configuration);
-            var expenses = expenseDB.GetExpensesByEmployer(1);
+            var user = _accessor.HttpContext.Session.GetObjectFromJson<User>("LoggedInUser");
+            IEnumerable<Expense> expenses;
+            if (user.RoleId == 0)
+            {
+                expenses = expenseDB.GetExpensesByEmployer(user.EmployerId);
+            }
+            else
+            {
+                expenses = expenseDB.GetExpenseByUserID(user.IDNumber);
+
+            }
             return View(expenses);
         }
 
@@ -60,9 +70,9 @@ namespace ExpenseTracker.Controllers
                     // TODO: Add employer to User model
                     expense.EmployerId = user.EmployerId;
                     ExpenseDB expenseDB = new ExpenseDB(_configuration);
-                    expenseDB.InsertExpense(expense);
+                    expenseDB.InsertExpense(expense, user.IDNumber);
                 }
-                    return RedirectToAction("Index");
+                return RedirectToAction("Index");
             }
             catch
             {
@@ -75,7 +85,7 @@ namespace ExpenseTracker.Controllers
         {
             ExpenseDB expenseDb = new ExpenseDB(_configuration);
             User user = _accessor.HttpContext.Session.GetObjectFromJson<User>("LoggedInUser");
-            ViewBag.Type = user.RoleId; 
+            ViewBag.Type = user.RoleId;
             return View(expenseDb.GetExpenseById(id));
         }
 
