@@ -26,11 +26,21 @@ namespace ExpenseTracker.Controllers
         {
             // If employer look up by employer ID that matched user ID if employee then look them up based on user ID
             ExpenseDB expenseDB = new ExpenseDB(_configuration);
+            UserDB userDB = new UserDB(_configuration);
             var user = _accessor.HttpContext.Session.GetObjectFromJson<User>("LoggedInUser");
+            ViewBag.Type = user.RoleId;
             IEnumerable<Expense> expenses;
             if (user.RoleId == 0)
             {
                 expenses = expenseDB.GetExpensesByEmployer(user.EmployerId);
+                foreach (var expense in expenses)
+                {
+                    if (expense.EmployeeName == " ")
+                    {
+                        var tempUser = userDB.GetUserById(expense.UserID);
+                        expense.EmployeeName = tempUser.FirstName + " " + tempUser.LastName;
+                    }
+                }
             }
             else
             {
@@ -97,7 +107,16 @@ namespace ExpenseTracker.Controllers
             try
             {
                 ExpenseDB expenseDB = new ExpenseDB(_configuration);
-                expenseDB.UpdateExpense(expense);
+                User user = _accessor.HttpContext.Session.GetObjectFromJson<User>("LoggedInUser");
+
+                if (user.RoleId == 0)
+                {
+                    expenseDB.UpdateExpenseStatus(expense);
+                }
+                else
+                {
+                    expenseDB.UpdateExpense(expense);
+                }
                 return RedirectToAction("Index");
             }
             catch
