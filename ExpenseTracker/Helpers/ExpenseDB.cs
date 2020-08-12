@@ -78,6 +78,28 @@ namespace ExpenseTracker.Helpers
                 var temp = ex.Message;
             }
         }
+        public void UpdateExpenseStatus(Expense expense)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    connection.Open();
+                    SqlCommand cmd = new SqlCommand("Expense_StatusUpdate", connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Id", expense.Id);
+                    cmd.Parameters.AddWithValue("@Status", expense.Status);
+
+                    //if rows change has a value then you know that it this worked correctly
+                    int rowsChanged = cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                var temp = ex.Message;
+            }
+        }
+
 
         public Expense GetExpenseById(int expenseId)
         {
@@ -140,6 +162,7 @@ namespace ExpenseTracker.Helpers
                             Amount = reader.GetDecimal(6),
                             ReportNumber = reader.GetString(7),
                             EmployerId = reader.GetInt32(8),
+                            UserID = reader.GetInt32(9),
                             Status = (Statuses)reader.GetInt32(10)
                         });
 

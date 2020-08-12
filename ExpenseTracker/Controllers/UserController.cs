@@ -41,7 +41,7 @@ namespace ExpenseTracker.Controllers
             //bool isError = false;
 
             UserDB userDB = new UserDB(_configuration);
-            user.RoleId = 0;
+            user.RoleId = 1;
 
             //At this point and For testing purposes I am only validating the username and password 
             //Ensures the username is not null
@@ -173,6 +173,7 @@ namespace ExpenseTracker.Controllers
         {
             EmployerDB employerDB = new EmployerDB(_configuration);
             User user = _accessor.HttpContext.Session.GetObjectFromJson<User>("LoggedInUser");
+            ViewBag.Role = user.RoleId;
             DashboardViewModel dashboardVM = new DashboardViewModel()
             {
                 User = user,

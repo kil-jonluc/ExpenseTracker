@@ -31,5 +31,9 @@ namespace ExpenseTracker.Models
         public string ReportNumber { get; set; }
         public int EmployerId { get; set; }
         public Statuses Status { get; set; }
+
+        [DisplayName("Employee Name")]
+        public string EmployeeName { get; set; } = " ";
+        public int UserID { get; set; }
     }
 }

@@ -7,9 +7,12 @@
 <h1>Dashboard</h1>
 <br />
 <div class="row">
+    @if (ViewBag.Role == 1)
+    {
     <div class="col-lg-2">
         <a href="@Url.ActionLink("Create", "Expense")" type="button" class="btn btn-dark btn-block">Enter New Expense</a>
     </div>
+    }
     <div class="col-lg-2">
         <a href="@Url.ActionLink("Index", "Expense")" type="button" class="btn btn-dark btn-block">View List of Expenses</a>
     </div>

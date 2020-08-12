@@ -3,11 +3,11 @@
 @using ExpenseTracker.Helpers;
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "List of Expenses";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+    <h1>List of Expenses</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -15,6 +15,9 @@
 <table class="table">
     <thead>
         <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.EmployeeName)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
@@ -47,6 +50,10 @@
         {
             <tr>
                 <td>
+
+                    @Html.DisplayFor(modelItem => item.EmployeeName)
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
                 <td>
@@ -73,11 +80,20 @@
                     }
                     @statusDescription
                 </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                    @*@Html.ActionLink("Details", "Details", new { id = item.Id }) |*@
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                </td>
+                @if (ViewBag.Type == 1)
+                {
+
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    </td>
+                }
+                @if (ViewBag.Type == 0)
+                {
+                    <td>
+                        @Html.ActionLink("Edit Status", "Edit", new { id = item.Id })
+                    </td>
+                }
             </tr>
         }
     </tbody>
