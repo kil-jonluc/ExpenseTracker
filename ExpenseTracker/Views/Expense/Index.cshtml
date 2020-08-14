@@ -7,7 +7,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-    <h1>List of Expenses</h1>
+<h1>List of Expenses</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -15,9 +15,12 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.EmployeeName)
-            </th>
+            @if (ViewBag.Type == 0)
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.EmployeeName)
+                </th>
+            }
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
@@ -49,10 +52,13 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
+                @if (ViewBag.Type == 0)
+                {
+                    <td>
 
-                    @Html.DisplayFor(modelItem => item.EmployeeName)
-                </td>
+                        @Html.DisplayFor(modelItem => item.EmployeeName)
+                    </td>
+                }
                 <td>
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
